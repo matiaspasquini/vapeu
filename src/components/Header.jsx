@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import logoIcon from "../assets/logovapeu.png";
 import logoText from "../assets/vap.png";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   // Detectar scroll para cambiar estilo del header
   useEffect(() => {
@@ -14,6 +17,31 @@ const Header = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Función para manejar navegación
+  const handleNavigation = (href) => {
+    if (href.startsWith('#')) {
+      // Si estamos en la página principal, hacer scroll a la sección
+      if (location.pathname === '/') {
+        const element = document.querySelector(href);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      } else {
+        // Si no estamos en la página principal, navegar a home y luego hacer scroll
+        navigate('/');
+        setTimeout(() => {
+          const element = document.querySelector(href);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 100);
+      }
+    } else {
+      navigate(href);
+    }
+    setIsMobileMenuOpen(false);
+  };
 
   const navLinks = [
     { href: "#inicio", label: "Inicio" },
@@ -33,8 +61,8 @@ const Header = () => {
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-8 flex justify-between items-center">
         {/* Logo completo */}
-        <a
-          href="#inicio"
+        <button
+          onClick={() => handleNavigation('#inicio')}
           className="flex items-center space-x-2 group transition-transform duration-300 hover:scale-105"
         >
           <img
@@ -47,30 +75,30 @@ const Header = () => {
             alt="Vapeu texto"
             className="h-7 md:h-8 w-auto"
           />
-        </a>
+        </button>
 
         {/* Navegación Desktop */}
         <nav className="hidden md:flex items-center space-x-1">
           {navLinks.map((link, index) => (
-            <a
+            <button
               key={index}
-              href={link.href}
+              onClick={() => handleNavigation(link.href)}
               className="relative px-4 py-2 text-vapor-700 font-medium text-sm tracking-wide transition-all duration-300 hover:text-azul-700 group"
             >
               {link.label}
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-azul-700 transition-all duration-300 group-hover:w-full"></span>
-            </a>
+            </button>
           ))}
           
           {/* CTA Button */}
-          <a
-            href="#contacto"
+          <button
+            onClick={() => handleNavigation('#contacto')}
             className="ml-4 px-5 py-2.5 bg-azul-700 text-white font-semibold text-sm rounded-lg 
                      hover:bg-azul-600 hover:-translate-y-0.5 hover:shadow-card-hover 
                      transition-all duration-300 shadow-card"
           >
             Contactar
-          </a>
+          </button>
         </nav>
 
         {/* Botón Menú Mobile */}
@@ -105,24 +133,22 @@ const Header = () => {
       >
         <nav className="bg-white/95 backdrop-blur-lg border-t border-vapor-100 px-6 py-4 space-y-1">
           {navLinks.map((link, index) => (
-            <a
+            <button
               key={index}
-              href={link.href}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block px-4 py-3 text-vapor-700 font-medium hover:bg-vapor-50 
+              onClick={() => handleNavigation(link.href)}
+              className="block w-full text-left px-4 py-3 text-vapor-700 font-medium hover:bg-vapor-50 
                        hover:text-azul-700 rounded-lg transition-all duration-200"
             >
               {link.label}
-            </a>
+            </button>
           ))}
-          <a
-            href="#contacto"
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="block px-4 py-3 bg-azul-700 text-white font-semibold text-center 
+          <button
+            onClick={() => handleNavigation('#contacto')}
+            className="block w-full px-4 py-3 bg-azul-700 text-white font-semibold text-center 
                      rounded-lg hover:bg-azul-600 transition-colors duration-200 mt-2"
           >
             Contactar
-          </a>
+          </button>
         </nav>
       </div>
     </header>

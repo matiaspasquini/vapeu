@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ArrowRight, Building2, Route, Pickaxe, Mountain } from "lucide-react";
 
 // Imágenes
@@ -58,6 +58,32 @@ const fadeUp = {
 };
 
 const Services = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Función para manejar navegación
+  const handleNavigation = (href) => {
+    if (href.startsWith('#')) {
+      // Si estamos en la página principal, hacer scroll a la sección
+      if (location.pathname === '/') {
+        const element = document.querySelector(href);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      } else {
+        // Si no estamos en la página principal, navegar a home y luego hacer scroll
+        navigate('/');
+        setTimeout(() => {
+          const element = document.querySelector(href);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 100);
+      }
+    } else {
+      navigate(href);
+    }
+  };
   return (
     <section id="servicios" className="py-20 md:py-28 bg-white relative overflow-hidden">
       {/* Elemento decorativo de fondo */}
@@ -166,15 +192,15 @@ const Services = () => {
           <p className="text-vapor-600 mb-6">
             ¿Necesitás una solución personalizada para tu proyecto?
           </p>
-          <a
-            href="#contacto"
+          <button
+            onClick={() => handleNavigation('#contacto')}
             className="inline-flex items-center gap-2 px-8 py-4 bg-azul-700 text-white 
                      font-semibold rounded-lg hover:bg-azul-600 hover:-translate-y-1 
                      hover:shadow-card-hover transition-all duration-300"
           >
             Consultanos sin compromiso
             <ArrowRight className="w-5 h-5" />
-          </a>
+          </button>
         </motion.div>
       </div>
     </section>

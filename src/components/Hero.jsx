@@ -1,13 +1,40 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Hero = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     // Activar animaciones después de montar el componente
     const timer = setTimeout(() => setIsVisible(true), 100);
     return () => clearTimeout(timer);
   }, []);
+
+  // Función para manejar navegación
+  const handleNavigation = (href) => {
+    if (href.startsWith('#')) {
+      // Si estamos en la página principal, hacer scroll a la sección
+      if (location.pathname === '/') {
+        const element = document.querySelector(href);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      } else {
+        // Si no estamos en la página principal, navegar a home y luego hacer scroll
+        navigate('/');
+        setTimeout(() => {
+          const element = document.querySelector(href);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 100);
+      }
+    } else {
+      navigate(href);
+    }
+  };
 
   return (
     <div className="relative w-full h-screen overflow-hidden">
@@ -54,8 +81,8 @@ const Hero = () => {
                        transition-all duration-1000 delay-500 transform
                        ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
           >
-            <a
-              href="#servicios"
+            <button
+              onClick={() => handleNavigation('#servicios')}
               className="group relative px-8 py-4 bg-naranja-600 text-white font-semibold text-lg 
                        rounded-lg overflow-hidden transition-all duration-300
                        hover:bg-naranja-700 hover:-translate-y-1 hover:shadow-deep
@@ -63,17 +90,17 @@ const Hero = () => {
             >
               <span className="relative z-10">Nuestros Servicios</span>
               <div className="absolute inset-0 bg-naranja-700 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
-            </a>
+            </button>
 
-            <a
-              href="#proyectos"
+            <button
+              onClick={() => handleNavigation('#proyectos')}
               className="group px-8 py-4 bg-transparent border-2 border-white text-white font-semibold text-lg 
                        rounded-lg transition-all duration-300 backdrop-blur-sm
                        hover:bg-white hover:text-azul-700 hover:-translate-y-1 hover:shadow-deep
                        focus:outline-none focus:ring-4 focus:ring-white/50"
             >
               Ver Proyectos
-            </a>
+            </button>
           </div>
 
           {/* Indicador de scroll animado */}
